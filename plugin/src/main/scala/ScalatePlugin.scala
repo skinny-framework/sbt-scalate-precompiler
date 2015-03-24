@@ -1,7 +1,10 @@
 package skinny.scalate
+
+import scala.language.reflectiveCalls
+import scala.language.postfixOps
 import sbt._
 import Keys._
-import Project.Initialize
+import Def.Initialize
 import java.io.File
 import sbt.classpath.ClasspathUtilities
 
@@ -104,7 +107,7 @@ object ScalatePlugin extends Plugin {
     }
   }
 
-  val scalateSettings: Seq[sbt.Project.Setting[_]] = Seq(
+  val scalateSettings: Seq[sbt.Def.Setting[_]] = Seq(
     ivyConfigurations += Scalate,
     scalateTemplateConfig in Compile := Seq(TemplateConfig(file(".") / "src" / "main" / "webapp" / "WEB-INF", Nil, Nil, Some("scalate"))),
     scalateLoggingConfig in Compile <<= (resourceDirectory in Compile) { _ / "logback.xml" },
