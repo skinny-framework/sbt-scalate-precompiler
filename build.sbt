@@ -1,9 +1,6 @@
 lazy val precompiler = (project in file("precompiler")).settings(baseSettings: _*).settings(
   name := "scalate-precompiler",
-  libraryDependencies <+= (scalaVersion) {
-    case v if v.startsWith("2.10") => "org.fusesource.scalate" %% "scalate-core" % "1.6.1" % "compile"
-    case _                         => "org.scalatra.scalate"   %% "scalate-core" % "1.7.1" % "compile"
-  }
+  libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.7.1" % "compile"
 ).settings(scalariformSettings: _*)
 
 lazy val plugin = (project in file("plugin")).settings(baseSettings: _*).settings(
@@ -28,12 +25,12 @@ object Version {
 
 lazy val baseSettings = Seq(
   organization := "org.skinny-framework",
+  version := "1.7.1.0",
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   parallelExecution in Test := false,
   logBuffered in Test := false,
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   javacOptions ++= Seq("-target", "1.6", "-source", "1.6"),
-  licenses := Seq("MIT" -> new URL("https://github.com/skinny-framework/sbt-scalate-precompiler/blob/master/LICENSE")),
   publishMavenStyle := true,
   pomIncludeRepository := { x => false },
   publishTo <<= version { (v: String) =>
