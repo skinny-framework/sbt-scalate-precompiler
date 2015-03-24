@@ -2,10 +2,8 @@ project/boot
 project/target
 target
 .target
-
 .idea
 *.iml
-
 .classpath
 .project
 .scala_dependencies

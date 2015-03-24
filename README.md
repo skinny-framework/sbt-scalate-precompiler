@@ -1,6 +1,7 @@
-# Scalate support for SBT 0.1x.x
+# sbt-scalate-precompiler
  
-Integration for SBT that lets you generate sources for your Scalate templates and precompile them as part of the normal compilation process. This plugin is published to scala-tools.org.
+Integration for SBT that lets you generate sources for your Scalate templates and precompile them as part of the normal compilation process. 
+This plugin is published to sonatype oss repository.
  
 ## Usage
 
@@ -8,41 +9,9 @@ Integration for SBT that lets you generate sources for your Scalate templates an
 
 Include the plugin in `project/plugins.sbt`:
 
-For sbt 0.12.x, 0.13.x:
-
 ```scala
-addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.5.0")
+addSbtPlugin("org.skinny-framework" % "sbt-scalate-precompiler" % "1.7.1.0-SNAPSHOT")
 ```
-
-For sbt 0.11.3:
-
-```scala
-resolvers += Resolver.url("sbt-plugin-releases",
-  new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(
-    Resolver.ivyStylePatterns)
-
-addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.2.0")
-```
-
-for sbt 0.11.2: (maven central)
-
-```scala
-libraryDependencies <+= sbtVersion(v => "com.mojolly.scalate" %% "xsbt-scalate-generator" % (v + "-0.1.6"))
-```
-
-or as a git dependency in `project/project/build.scala`:
-
-```scala
-import sbt._
-import Keys._
-
-object PluginsBuild extends Build {
-  lazy val root = Project("plugins", file(".")) dependsOn (scalateGenerate) settings (scalacOptions += "-deprecation")
-  lazy val scalateGenerate = ProjectRef(uri("git://github.com/mojolly/xsbt-scalate-generate.git"), "xsbt-scalate-generator")
-}
-```
-
-### Configuring the plugin in `build.sbt`
 
 Configure the plugin in `build.sbt`:
 
@@ -102,7 +71,7 @@ Configure the plugin in `project/build.scala`:
 
 import sbt._
 import sbt.Keys._
-import com.mojolly.scalate.ScalatePlugin._
+import skinny.scalate.ScalatePlugin._
 import ScalateKeys._
 
 object build extends Build {  
@@ -177,4 +146,5 @@ Patches are gladly accepted from their original author. Along with any patches, 
  
 ## License
  
-MIT licensed. Check the [LICENSE](https://raw.github.com/backchatio/xsbt-scalate-generate/master/LICENSE) file.
+the MIT license
+

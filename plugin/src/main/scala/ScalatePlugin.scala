@@ -1,5 +1,4 @@
-package com.mojolly.scalate
-
+package skinny.scalate
 import sbt._
 import Keys._
 import Project.Initialize
@@ -9,12 +8,12 @@ import sbt.classpath.ClasspathUtilities
 object ScalatePlugin extends Plugin {
 
   case class Binding(
-          name: String,
-          className: String = "Any",
-          importMembers: Boolean = false,
-          defaultValue: String = "",
-          kind: String = "val",
-          isImplicit: Boolean = false)
+    name: String,
+    className: String = "Any",
+    importMembers: Boolean = false,
+    defaultValue: String = "",
+    kind: String = "val",
+    isImplicit: Boolean = false)
 
   /**
    * Template Configuration
@@ -23,30 +22,22 @@ object ScalatePlugin extends Plugin {
    * @param scalateBindings
    */
   case class TemplateConfig(
-     scalateTemplateDirectory:File,
-     scalateImports:Seq[String],
-     scalateBindings:Seq[Binding],
-     packagePrefix: Option[String] = Some("scalate")
-   )
+    scalateTemplateDirectory: File,
+    scalateImports: Seq[String],
+    scalateBindings: Seq[Binding],
+    packagePrefix: Option[String] = Some("scalate"))
 
   val Scalate = config("scalate") hide
 
   object ScalateKeys {
-
-    val scalateTemplateConfig = SettingKey[Seq[TemplateConfig]]("scalate-template-configuration",
-      "Different Template Configurations")
-
-    val scalateLoggingConfig = SettingKey[File]("scalate-logging-config",
-      "Logback config to get rid of that infernal debug output.")
-
-     val scalateOverwrite = SettingKey[Boolean]("scalate-overwrite",
-      "Always generate the Scala sources even when they haven't changed")
-
+    val scalateTemplateConfig = SettingKey[Seq[TemplateConfig]]("scalate-template-configuration", "Different Template Configurations")
+    val scalateLoggingConfig = SettingKey[File]("scalate-logging-config", "Logback config to get rid of that infernal debug output.")
+    val scalateOverwrite = SettingKey[Boolean]("scalate-overwrite", "Always generate the Scala sources even when they haven't changed")
     val scalateClasspaths = TaskKey[ScalateClasspaths]("scalate-classpaths")
   }
 
   import ScalateKeys._
-    
+
   def scalateSourceGeneratorTask: Initialize[Task[Seq[File]]] = {
     (streams, sourceManaged in Compile, scalateLoggingConfig in Compile, managedClasspath in scalateClasspaths, scalateOverwrite in Compile, scalateTemplateConfig in Compile) map {
       (out, outputDir, logConfig, cp, overwrite, tc) => generateScalateSource(out, new File(outputDir, "scalate"), logConfig, cp, overwrite, tc)
@@ -63,16 +54,18 @@ object ScalatePlugin extends Plugin {
     var scalateBindings: Array[Array[AnyRef]]
     def execute: Array[File]
   }
-  
-  final case class ScalateClasspaths(classpath: PathFinder, scalateClasspath: PathFinder)
+
+  final case class ScalateClasspaths(
+    classpath: PathFinder,
+    scalateClasspath: PathFinder)
 
   def scalateClasspathsTask(cp: Classpath, scalateCp: Classpath) = ScalateClasspaths(cp.map(_.data), scalateCp.map(_.data))
 
-  def generateScalateSource(out: TaskStreams, outputDir: File, logConfig: File, cp: Classpath, overwrite: Boolean, templates:Seq[TemplateConfig]) = {
+  def generateScalateSource(out: TaskStreams, outputDir: File, logConfig: File, cp: Classpath, overwrite: Boolean, templates: Seq[TemplateConfig]) = {
     withScalateClassLoader(cp.files) { classLoader =>
       templates flatMap { t =>
 
-        val className = "com.mojolly.scalate.Generator"
+        val className = "skinny.scalate.Precompiler"
         val klass = classLoader.loadClass(className)
         val inst = klass.newInstance
         val generator = klass.newInstance.asInstanceOf[Generator]
@@ -115,11 +108,11 @@ object ScalatePlugin extends Plugin {
     ivyConfigurations += Scalate,
     scalateTemplateConfig in Compile := Seq(TemplateConfig(file(".") / "src" / "main" / "webapp" / "WEB-INF", Nil, Nil, Some("scalate"))),
     scalateLoggingConfig in Compile <<= (resourceDirectory in Compile) { _ / "logback.xml" },
-    libraryDependencies += "com.mojolly.scalate" %% "scalate-generator" % Version.version % Scalate.name,
+    libraryDependencies += "org.skinny-framework" %% "scalate-precompiler" % Version.version % Scalate.name,
     sourceGenerators in Compile <+= scalateSourceGeneratorTask,
-    watchSources <++= (scalateTemplateConfig in Compile) map ( _.map(_.scalateTemplateDirectory).flatMap(d => (d ** "*").get)),
+    watchSources <++= (scalateTemplateConfig in Compile) map (_.map(_.scalateTemplateDirectory).flatMap(d => (d ** "*").get)),
     scalateOverwrite := true,
-    managedClasspath in scalateClasspaths <<= (classpathTypes, update) map { ( ct, report)   =>
+    managedClasspath in scalateClasspaths <<= (classpathTypes, update) map { (ct, report) =>
       Classpaths.managedJars(Scalate, ct, report)
     },
     scalateClasspaths <<= (fullClasspath in Runtime, managedClasspath in scalateClasspaths) map scalateClasspathsTask)
