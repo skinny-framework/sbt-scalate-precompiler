@@ -121,9 +121,8 @@ object ScalatePlugin extends Plugin {
     scalateClasspaths <<= (fullClasspath in Runtime, managedClasspath in scalateClasspaths) map scalateClasspathsTask)
 
   /**
-   * Runs a block of code with the Scalate classpath as the context class
-   * loader.  The Scalate classpath is the [[runClassPath]] plus the
-   * [[buildScalaInstance]]'s jars.
+   * Runs a block of code with the Scalate classpath as the context class loader.
+   * The Scalate classpath is the runClassPath plus the buildScalaInstance's jars.
    */
   protected def withScalateClassLoader[A](runClassPath: Seq[File])(f: ClassLoader => A): A = {
     val oldLoader = Thread.currentThread.getContextClassLoader
