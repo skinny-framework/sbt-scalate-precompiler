@@ -16,7 +16,8 @@ object ScalatePlugin extends Plugin {
     importMembers: Boolean = false,
     defaultValue: String = "",
     kind: String = "val",
-    isImplicit: Boolean = false)
+    isImplicit: Boolean = false
+  )
 
   /**
    * Template Configuration
@@ -28,7 +29,8 @@ object ScalatePlugin extends Plugin {
     scalateTemplateDirectory: File,
     scalateImports: Seq[String],
     scalateBindings: Seq[Binding],
-    packagePrefix: Option[String] = Some("scalate"))
+    packagePrefix: Option[String] = Some("scalate")
+  )
 
   val Scalate = config("scalate") hide
 
@@ -60,7 +62,8 @@ object ScalatePlugin extends Plugin {
 
   final case class ScalateClasspaths(
     classpath: PathFinder,
-    scalateClasspath: PathFinder)
+    scalateClasspath: PathFinder
+  )
 
   def scalateClasspathsTask(cp: Classpath, scalateCp: Classpath) = ScalateClasspaths(cp.map(_.data), scalateCp.map(_.data))
 
@@ -92,7 +95,8 @@ object ScalatePlugin extends Plugin {
             b.importMembers.asInstanceOf[AnyRef],
             b.defaultValue.asInstanceOf[AnyRef],
             b.kind.asInstanceOf[AnyRef],
-            b.isImplicit.asInstanceOf[AnyRef])
+            b.isImplicit.asInstanceOf[AnyRef]
+          )
 
         }
         try {
@@ -110,15 +114,14 @@ object ScalatePlugin extends Plugin {
   val scalateSettings: Seq[sbt.Def.Setting[_]] = Seq(
     ivyConfigurations += Scalate,
     scalateTemplateConfig in Compile := Seq(TemplateConfig(file(".") / "src" / "main" / "webapp" / "WEB-INF", Nil, Nil, Some("scalate"))),
-    scalateLoggingConfig in Compile <<= (resourceDirectory in Compile) { _ / "logback.xml" },
+    scalateLoggingConfig in Compile := (resourceDirectory in Compile).value / "logback.xml",
     libraryDependencies += "org.skinny-framework" %% "scalate-precompiler" % Version.version % Scalate.name,
     sourceGenerators in Compile <+= scalateSourceGeneratorTask,
-    watchSources <++= (scalateTemplateConfig in Compile) map (_.map(_.scalateTemplateDirectory).flatMap(d => (d ** "*").get)),
+    watchSources ++= (scalateTemplateConfig in Compile).value.map(_.scalateTemplateDirectory).flatMap(d => (d ** "*").get),
     scalateOverwrite := true,
-    managedClasspath in scalateClasspaths <<= (classpathTypes, update) map { (ct, report) =>
-      Classpaths.managedJars(Scalate, ct, report)
-    },
-    scalateClasspaths <<= (fullClasspath in Runtime, managedClasspath in scalateClasspaths) map scalateClasspathsTask)
+    managedClasspath in scalateClasspaths := Classpaths.managedJars(Scalate, classpathTypes.value, update.value),
+    scalateClasspaths := scalateClasspathsTask((fullClasspath in Runtime).value, (managedClasspath in scalateClasspaths).value)
+  )
 
   /**
    * Runs a block of code with the Scalate classpath as the context class loader.

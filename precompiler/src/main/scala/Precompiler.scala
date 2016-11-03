@@ -32,7 +32,8 @@ class Precompiler {
           case a => Some(a.toString)
         }),
         b(4).asInstanceOf[String],
-        b(5).asInstanceOf[Boolean])
+        b(5).asInstanceOf[Boolean]
+      )
     }) ::: e.bindings
     e
   }
