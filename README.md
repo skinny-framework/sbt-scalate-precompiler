@@ -12,7 +12,7 @@ This plugin is published to sonatype oss repository.
 Include the plugin in `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.skinny-framework" % "sbt-scalate-precompiler" % "1.7.1.0")
+addSbtPlugin("org.skinny-framework" % "sbt-scalate-precompiler" % "1.8.0.0")
 ```
 
 Configure the plugin in `build.sbt`:
