@@ -2,7 +2,7 @@ import skinny.scalate.ScalatePlugin._
 import ScalateKeys._
 
 version := "0.1"
-scalaVersion := "2.10.4"
+scalaVersion := "2.12.1"
 
 resolvers += Resolver.file("ivy-local", file(Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.mavenStylePatterns)
 resolvers ++= Seq(
@@ -10,12 +10,13 @@ resolvers ++= Seq(
   "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.7.1" % "compile"
+libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.8.0" % "compile"
 
 scalateSettings ++ Seq(
   scalateOverwrite := true
 )
-scalateTemplateConfig in Compile <<= (sourceDirectory in Compile) { base =>
+scalateTemplateConfig in Compile := {
+  val base = (sourceDirectory in Compile).value
   Seq(
     TemplateConfig(
       base / "templates",
@@ -25,27 +26,30 @@ scalateTemplateConfig in Compile <<= (sourceDirectory in Compile) { base =>
   )
 }
 
-TaskKey[Unit]("recordModifiedTime") <<= (sourceManaged in Compile) map { (base) =>
+TaskKey[Unit]("recordModifiedTime") := {
+  val base = (sourceManaged in Compile).value
   val recorded = base / "index_ssp.scala"
   IO.touch(recorded, true)
 }
 
-TaskKey[Unit]("checkCompiled") <<= (sourceManaged in Compile) map { (base) =>
+TaskKey[Unit]("checkCompiled") := {
+  val base = (sourceManaged in Compile).value
   val generated = base / "scalate" / "templates" / "index_ssp.scala"
   if (!generated.exists) {
-    error(s"${generated.getAbsolutePath} doesn't exist.")
+    sys.error(s"${generated.getAbsolutePath} doesn't exist.")
   }
   ()
 }
 
-TaskKey[Unit]("checkRecompiled") <<= (sourceManaged in Compile) map { (base) =>
+TaskKey[Unit]("checkRecompiled") := {
+  val base = (sourceManaged in Compile).value
   val recorded = base / "index_ssp.scala"
   val generated = base / "scalate" / "templates" / "index_ssp.scala"
   if (!generated.exists) {
-    error(s"${generated.getAbsolutePath} doesn't exist.")
+    sys.error(s"${generated.getAbsolutePath} doesn't exist.")
   }
   if (recorded.lastModified > generated.lastModified) {
-    error(s"${generated.getAbsolutePath} are not recompiled.")
+    sys.error(s"${generated.getAbsolutePath} are not recompiled.")
   }
   ()
 }

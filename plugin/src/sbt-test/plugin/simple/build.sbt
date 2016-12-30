@@ -2,7 +2,7 @@ import skinny.scalate.ScalatePlugin._
 import ScalateKeys._
 
 version := "0.1"
-scalaVersion := "2.10.4"
+scalaVersion := "2.12.1"
 
 resolvers += Resolver.file("ivy-local", file(Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.mavenStylePatterns)
 resolvers ++= Seq(
@@ -10,10 +10,11 @@ resolvers ++= Seq(
   "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.7.1" % "compile"
+libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.8.0" % "compile"
 
 scalateSettings
-scalateTemplateConfig in Compile <<= (sourceDirectory in Compile) { base =>
+scalateTemplateConfig in Compile := {
+  val base = (sourceDirectory in Compile).value
   Seq(
     TemplateConfig(
       base / "templates",
@@ -22,10 +23,11 @@ scalateTemplateConfig in Compile <<= (sourceDirectory in Compile) { base =>
     )
   )
 }
-TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (outputDir) =>
+TaskKey[Unit]("check") := {
+  val outputDir = (sourceManaged in Compile).value
   val scalaFile = outputDir / "scalate" / "templates" / "index_ssp.scala"
   if (!scalaFile.exists) {
-    error(s"${scalaFile.getAbsolutePath} doesn't exist.")
+    sys.error(s"${scalaFile.getAbsolutePath} doesn't exist.")
   }
   ()
 }
