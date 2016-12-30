@@ -1,10 +1,11 @@
 # sbt-scalate-precompiler
 
-[![Build Status](https://travis-ci.org/skinny-framework/sbt-scalate-precompiler.svg?branch=master)](https://travis-ci.org/skinny-framework/sbt-scalate-precompiler)
+# IMPORTANT NOTICE
 
-Integration for SBT that lets you generate sources for your Scalate templates and precompile them as part of the normal compilation process. 
-This plugin is published to sonatype oss repository.
- 
+This project has been moved to scalate organization:
+
+https://github.com/scalate/sbt-scalate-precompiler
+
 ## Usage
 
 ### Getting the plugin
