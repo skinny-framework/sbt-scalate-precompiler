@@ -1,2 +1,4 @@
 language: scala
 script: "./travis.sh"
+jdk:
+- oraclejdk8
