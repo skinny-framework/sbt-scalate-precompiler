@@ -21,7 +21,7 @@ Configure the plugin in `build.sbt`:
 
 import ScalateKeys._
 
-seq(scalateSettings:_*)
+scalateSettings
       
 // Scalate Precompilation and Bindings
 scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
