@@ -144,7 +144,7 @@ trait YourScalateSupport extends ScalateSupport {
 
 ## Patches
 
-Patches are gladly accepted from their original author. Along with any patches, please state that the patch is your original work and that you license the work to the *xsbt-scalate-generate* project under the MIT License.
+Patches are gladly accepted from their original author. Along with any patches, please state that the patch is your original work and that you license the work to this project under the MIT License.
  
 ## License
  
